@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/scorix/tomorrowio-client-go/tomorrowio"
+	"github.com/scorix/tomorrowio-client-go"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
