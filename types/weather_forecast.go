@@ -3,8 +3,8 @@ package types
 /* https://docs.tomorrow.io/reference/weather-forecast */
 
 type WeatherForecast struct {
-	Timelines []WeatherTimeline `json:"timelines"`
-	Location  WeatherLocation   `json:"location"`
+	Timelines WeatherTimeline `json:"timelines"`
+	Location  WeatherLocation `json:"location"`
 }
 
 type WeatherTimeline struct {
