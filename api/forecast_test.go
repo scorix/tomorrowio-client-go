@@ -8,6 +8,11 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+func TestGetWeatherForecastURL(t *testing.T) {
+	url := api.GetWeatherForecastURL("https://api.tomorrow.io", 43.15616989135742, -75.8449935913086, "key1")
+	assert.Equal(t, "https://api.tomorrow.io/v4/weather/forecast?location=43.156170,-75.844994&apikey=key1", url)
+}
+
 func TestGetWeatherForecast(t *testing.T) {
 	mockServer := NewMockServer(t)
 

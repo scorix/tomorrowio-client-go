@@ -22,10 +22,7 @@ func GetWeatherForecastURL(baseURL string, lat, lon float64, apiKey string) stri
 	}
 
 	u.Path = WEATHER_FORECAST_V4_PATH
-	v := u.Query()
-	v.Set("location", fmt.Sprintf("%f,%f", lat, lon))
-	v.Set("apikey", apiKey)
-	u.RawQuery = v.Encode()
+	u.RawQuery = fmt.Sprintf("location=%f,%f&apikey=%s", lat, lon, apiKey)
 
 	return u.String()
 }
