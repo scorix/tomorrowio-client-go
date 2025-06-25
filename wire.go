@@ -1,4 +1,4 @@
-package tommorrowio
+package tomorrowio
 
 import "github.com/google/wire"
 

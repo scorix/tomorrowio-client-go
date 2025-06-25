@@ -1,10 +1,11 @@
-package tommorrowio
+package tomorrowio_test
 
 import (
 	"context"
 	"testing"
 	"time"
 
+	"github.com/scorix/tomorrowio-client-go/tomorrowio"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -21,7 +22,7 @@ func TestAPIKeyPicker(t *testing.T) {
 	baseTime := time.Date(2024, 1, 1, 0, 0, 0, 0, time.UTC)
 
 	t.Run("daily limit", func(t *testing.T) {
-		picker := NewAPIKeyPicker([]string{"key1"}, 2, 60, baseTime) // 2 requests per day, 60 rpm
+		picker := tomorrowio.NewAPIKeyPicker([]string{"key1"}, 2, 60, baseTime) // 2 requests per day, 60 rpm
 		ctx := context.Background()
 
 		// First request should succeed
@@ -36,11 +37,11 @@ func TestAPIKeyPicker(t *testing.T) {
 
 		// Third request should fail (daily limit exceeded)
 		_, err = picker.GetAPIKey(ctx, timeNowFn(baseTime))
-		assert.ErrorIs(t, err, ErrNoAPIKeyAvailable)
+		assert.ErrorIs(t, err, tomorrowio.ErrNoAPIKeyAvailable)
 	})
 
 	t.Run("rpm limit", func(t *testing.T) {
-		picker := NewAPIKeyPicker([]string{"key1"}, 1000, 2, baseTime) // 1000 requests per day, 2 rpm
+		picker := tomorrowio.NewAPIKeyPicker([]string{"key1"}, 1000, 2, baseTime) // 1000 requests per day, 2 rpm
 		ctx := context.Background()
 
 		// First request should succeed
@@ -55,7 +56,7 @@ func TestAPIKeyPicker(t *testing.T) {
 
 		// Third request should fail (rpm limit exceeded)
 		_, err = picker.GetAPIKey(ctx, timeNowFn(baseTime, 2*time.Second))
-		assert.ErrorIs(t, err, ErrNoAPIKeyAvailable)
+		assert.ErrorIs(t, err, tomorrowio.ErrNoAPIKeyAvailable)
 
 		// Request should succeed again after rate limit reset
 		key3, err := picker.GetAPIKey(ctx, timeNowFn(baseTime, 31*time.Second))
@@ -64,7 +65,7 @@ func TestAPIKeyPicker(t *testing.T) {
 	})
 
 	t.Run("multiple keys", func(t *testing.T) {
-		picker := NewAPIKeyPicker([]string{"key1", "key2"}, 1, 60, baseTime) // 1 request per day per key, 60 rpm
+		picker := tomorrowio.NewAPIKeyPicker([]string{"key1", "key2"}, 1, 60, baseTime) // 1 request per day per key, 60 rpm
 		ctx := context.Background()
 
 		// First request should succeed with either key
@@ -80,11 +81,11 @@ func TestAPIKeyPicker(t *testing.T) {
 
 		// Third request should fail (all keys have reached daily limit)
 		_, err = picker.GetAPIKey(ctx, timeNowFn(baseTime))
-		assert.ErrorIs(t, err, ErrNoAPIKeyAvailable)
+		assert.ErrorIs(t, err, tomorrowio.ErrNoAPIKeyAvailable)
 	})
 
 	t.Run("daily reset", func(t *testing.T) {
-		picker := NewAPIKeyPicker([]string{"key1"}, 1, 60, baseTime) // 1 request per day, 60 rpm
+		picker := tomorrowio.NewAPIKeyPicker([]string{"key1"}, 1, 60, baseTime) // 1 request per day, 60 rpm
 		ctx := context.Background()
 
 		// First request should succeed
@@ -94,7 +95,7 @@ func TestAPIKeyPicker(t *testing.T) {
 
 		// Second request should fail (daily limit exceeded)
 		_, err = picker.GetAPIKey(ctx, timeNowFn(baseTime))
-		assert.ErrorIs(t, err, ErrNoAPIKeyAvailable)
+		assert.ErrorIs(t, err, tomorrowio.ErrNoAPIKeyAvailable)
 
 		// Move time forward by 25 hours to ensure we're in the next day
 		nextDay := baseTime.Add(25 * time.Hour)
